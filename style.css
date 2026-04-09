@@ -1,0 +1,429 @@
+/* =========================================================
+   ¡El Precio Justo! – Game-Show Aesthetic
+   ========================================================= */
+
+/* ---------- Reset & Base ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #1a0a2e;
+  --bg-card:   #2d1b4e;
+  --gold:      #ffd700;
+  --gold-dark: #c5a200;
+  --white:     #f5f5f5;
+  --green:     #27ae60;
+  --red:       #e74c3c;
+  --blue:      #3498db;
+  --gray:      #95a5a6;
+  --font:      'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --radius:    12px;
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ---------- Screens ---------- */
+.screen { display: none; flex-direction: column; min-height: 100vh; }
+.screen.active { display: flex; }
+
+/* ---------- Buttons ---------- */
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: #1a0a2e;
+  border: none;
+  border-radius: var(--radius);
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  padding: 0.75rem 2rem;
+}
+.btn-primary:hover { transform: scale(1.04); box-shadow: 0 4px 20px rgba(255,215,0,.4); }
+.btn-primary:active { transform: scale(0.97); }
+
+.btn-secondary {
+  background: rgba(255,255,255,.1);
+  color: var(--white);
+  border: 2px solid var(--gold);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.4rem 1rem;
+}
+
+.btn-large { font-size: 1.35rem; padding: 1rem 2.5rem; min-height: 70px; }
+.btn-small { font-size: 0.85rem; padding: 0.4rem 0.8rem; min-height: auto; }
+
+.hidden { display: none !important; }
+
+/* =========================================================
+   PANTALLA 1 – CONFIGURACIÓN
+   ========================================================= */
+.setup-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 2rem 1rem;
+  gap: 2rem;
+}
+
+.game-logo h1 {
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  color: var(--gold);
+  text-align: center;
+  text-shadow: 0 0 30px rgba(255,215,0,.5);
+}
+.subtitle {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--gray);
+}
+
+.setup-card {
+  background: var(--bg-card);
+  padding: 2rem;
+  border-radius: var(--radius);
+  width: min(600px, 95vw);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,.4);
+}
+
+.form-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.form-row label { font-size: 1.1rem; }
+
+.number-control { display: flex; align-items: center; gap: 0.5rem; }
+.number-control button {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+.number-control input {
+  width: 60px; text-align: center;
+  background: rgba(255,255,255,.1);
+  border: 1px solid var(--gray);
+  border-radius: 8px;
+  color: var(--white);
+  font-size: 1.2rem;
+  padding: 0.4rem;
+}
+
+.player-names-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.6rem;
+}
+.player-names-grid input {
+  background: rgba(255,255,255,.08);
+  border: 1px solid var(--gray);
+  border-radius: 8px;
+  color: var(--white);
+  padding: 0.6rem 0.8rem;
+  font-size: 1rem;
+}
+.player-names-grid input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(255,215,0,.3);
+}
+
+/* =========================================================
+   PANTALLA 2 – CARGANDO
+   ========================================================= */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 1.5rem;
+}
+
+.spinner {
+  width: 64px; height: 64px;
+  border: 6px solid rgba(255,215,0,.2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* =========================================================
+   PANTALLA 3 – JUEGO
+   ========================================================= */
+.game-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem 1.5rem;
+  background: var(--bg-card);
+  flex-wrap: wrap;
+  position: relative;
+}
+.header-round {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+.header-primo { font-size: 1rem; }
+.primo-name-text { color: var(--gold); font-weight: 700; }
+
+.scoreboard-popup {
+  position: absolute;
+  top: 100%;
+  right: 1rem;
+  background: var(--bg-card);
+  border: 2px solid var(--gold);
+  border-radius: var(--radius);
+  padding: 1rem;
+  z-index: 100;
+  min-width: 220px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.6);
+}
+.scoreboard-popup .score-row {
+  display: flex; justify-content: space-between;
+  padding: 0.3rem 0; border-bottom: 1px solid rgba(255,255,255,.1);
+}
+
+.game-main {
+  display: flex;
+  flex: 1;
+  padding: 1rem;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  overflow-y: auto;
+}
+
+.product-panel {
+  flex: 1 1 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.product-image-wrap {
+  width: min(350px, 90vw);
+  aspect-ratio: 1;
+  background: #fff;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,.5);
+}
+.product-image-wrap img {
+  max-width: 90%; max-height: 90%; object-fit: contain;
+}
+.product-title {
+  text-align: center;
+  font-size: 1.2rem;
+  max-width: 400px;
+}
+
+.prices-panel {
+  flex: 1 1 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.player-turn-info {
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 0.5rem;
+  background: rgba(255,215,0,.1);
+  border-radius: var(--radius);
+}
+.current-player-name { color: var(--gold); font-weight: 700; font-size: 1.3rem; }
+
+.prices-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.8rem;
+}
+
+.price-btn {
+  background: linear-gradient(135deg, #3a2266, #4a2d7a);
+  color: var(--white);
+  border: 2px solid rgba(255,255,255,.2);
+  border-radius: var(--radius);
+  font-size: 1.25rem;
+  font-weight: 700;
+  padding: 1rem;
+  min-height: 70px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.price-btn:hover:not(:disabled) {
+  border-color: var(--gold);
+  transform: scale(1.03);
+  box-shadow: 0 4px 16px rgba(255,215,0,.3);
+}
+.price-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+.price-btn.selected {
+  opacity: 0.7;
+  border-color: var(--blue);
+}
+.price-btn .player-tag {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--gold);
+  margin-top: 4px;
+}
+.price-btn.correct-price {
+  background: linear-gradient(135deg, #1e8449, #27ae60) !important;
+  border-color: var(--green) !important;
+  opacity: 1 !important;
+  animation: pulse-correct 0.6s;
+}
+@keyframes pulse-correct {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+/* =========================================================
+   PANTALLA 4 – RESULTADO
+   ========================================================= */
+.reveal-header {
+  text-align: center;
+  padding: 2rem 1rem 1rem;
+}
+.reveal-header h2 { color: var(--gold); font-size: 2rem; }
+.correct-price-box {
+  display: inline-block;
+  background: var(--green);
+  color: #fff;
+  font-size: 2.5rem;
+  font-weight: 700;
+  padding: 0.5rem 2rem;
+  border-radius: var(--radius);
+  margin-top: 0.5rem;
+}
+
+.reveal-content {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 1.5rem;
+  justify-content: center;
+  overflow-y: auto;
+}
+.reveal-product {
+  text-align: center;
+  flex: 0 1 250px;
+}
+.reveal-product img {
+  width: 180px; height: 180px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: var(--radius);
+}
+
+.reveal-results, .reveal-scores {
+  flex: 1 1 280px;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 1.2rem;
+}
+.reveal-results h3, .reveal-scores h3 {
+  color: var(--gold);
+  margin-bottom: 0.8rem;
+  font-size: 1.1rem;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.result-row .medal { margin-right: 0.4rem; }
+.result-row .points { color: var(--gold); font-weight: 700; }
+
+.reveal-actions {
+  text-align: center;
+  padding: 1.5rem;
+}
+
+/* =========================================================
+   PANTALLA 5 – FINAL
+   ========================================================= */
+.final-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 2rem 1rem;
+  gap: 2rem;
+}
+.final-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: var(--gold);
+  text-shadow: 0 0 40px rgba(255,215,0,.5);
+}
+.final-podium {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.podium-card {
+  background: var(--bg-card);
+  border: 3px solid var(--gold);
+  border-radius: var(--radius);
+  padding: 1.5rem 2rem;
+  text-align: center;
+  min-width: 160px;
+}
+.podium-card.first  { border-color: #ffd700; box-shadow: 0 0 30px rgba(255,215,0,.4); }
+.podium-card.second { border-color: #c0c0c0; }
+.podium-card.third  { border-color: #cd7f32; }
+.podium-rank { font-size: 2rem; }
+.podium-name { font-size: 1.3rem; font-weight: 700; color: var(--gold); margin: 0.3rem 0; }
+.podium-score { font-size: 1.1rem; }
+
+.final-scores {
+  width: min(500px, 95vw);
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 1.2rem;
+}
+.final-score-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0.3rem;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  font-size: 1.05rem;
+}
+.final-score-row .score-val { color: var(--gold); font-weight: 700; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 600px) {
+  .prices-grid { grid-template-columns: repeat(2, 1fr); }
+  .game-main { flex-direction: column; }
+  .product-image-wrap { width: 80vw; }
+}

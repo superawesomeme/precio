@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>¡El Precio Justo!</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- PANTALLA 1: CONFIGURACIÓN -->
+  <div id="screen-setup" class="screen active">
+    <div class="setup-container">
+      <div class="game-logo">
+        <h1>¡El Precio Justo!</h1>
+        <p class="subtitle">Practica los números en español</p>
+      </div>
+      <div class="setup-card">
+        <div class="form-row">
+          <label for="player-count">Número de jugadores:</label>
+          <div class="number-control">
+            <button type="button" id="btn-decrease" aria-label="Disminuir">&minus;</button>
+            <input type="number" id="player-count" value="12" min="2" max="16" />
+            <button type="button" id="btn-increase" aria-label="Aumentar">+</button>
+          </div>
+        </div>
+        <div id="player-names" class="player-names-grid"></div>
+        <button id="btn-start" class="btn-primary btn-large">¡Empezar el juego!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTALLA 2: CARGANDO -->
+  <div id="screen-loading" class="screen">
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <h2>Cargando productos…</h2>
+      <p id="loading-status">Buscando productos en Carrefour España</p>
+    </div>
+  </div>
+
+  <!-- PANTALLA 3: JUEGO (RONDA) -->
+  <div id="screen-game" class="screen">
+    <header class="game-header">
+      <div class="header-round">
+        Ronda <span id="round-number">1</span>/<span id="total-rounds">12</span>
+      </div>
+      <div class="header-primo">
+        &#x1F451; El Primero: <span id="primo-name" class="primo-name-text"></span>
+      </div>
+      <button id="btn-toggle-scores" class="btn-secondary btn-small">Puntuación</button>
+      <div id="scoreboard-popup" class="scoreboard-popup hidden"></div>
+    </header>
+
+    <main class="game-main">
+      <section class="product-panel">
+        <div class="product-image-wrap">
+          <img id="product-image" src="" alt="Producto" />
+        </div>
+        <h2 id="product-title" class="product-title"></h2>
+      </section>
+
+      <section class="prices-panel">
+        <div id="player-turn-info" class="player-turn-info">
+          <span class="turn-label">Turno de:</span>
+          <span id="current-player-name" class="current-player-name"></span>
+        </div>
+        <div id="prices-grid" class="prices-grid"></div>
+        <button id="btn-reveal" class="btn-primary btn-large hidden">¡Revelar el precio correcto!</button>
+      </section>
+    </main>
+  </div>
+
+  <!-- PANTALLA 4: RESULTADO DE LA RONDA -->
+  <div id="screen-reveal" class="screen">
+    <header class="reveal-header">
+      <h2>¡El Precio Correcto!</h2>
+      <div class="correct-price-box">
+        <span id="correct-price-display"></span>
+      </div>
+    </header>
+    <div class="reveal-content">
+      <div class="reveal-product">
+        <img id="reveal-product-image" src="" alt="" />
+        <p id="reveal-product-title"></p>
+      </div>
+      <div class="reveal-results">
+        <h3>Resultados de la ronda</h3>
+        <div id="round-results"></div>
+      </div>
+      <div class="reveal-scores">
+        <h3>Puntuación total</h3>
+        <div id="reveal-scoreboard"></div>
+      </div>
+    </div>
+    <div class="reveal-actions">
+      <button id="btn-next-round" class="btn-primary btn-large">Siguiente ronda</button>
+    </div>
+  </div>
+
+  <!-- PANTALLA 5: PUNTUACIÓN FINAL -->
+  <div id="screen-final" class="screen">
+    <div class="final-container">
+      <h1 class="final-title">🏆 ¡Puntuación Final!</h1>
+      <div id="final-podium" class="final-podium"></div>
+      <div id="final-scores" class="final-scores"></div>
+      <button id="btn-restart" class="btn-primary btn-large">¡Jugar de nuevo!</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
