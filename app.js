@@ -204,19 +204,18 @@ const SVG_PLACEHOLDER = 'data:image/svg+xml,%3Csvg xmlns%3D%22http%3A//www.w3.or
 async function fetchProducts() {
   elLoadingStatus.textContent = 'Buscando productos destacados…';
   try {
-    const resp = await fetch('https://dummyjson.com/products?limit=50');
+    const resp = await fetch('data/products.json');
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const data = await resp.json();
+    const results = await resp.json();
 
-    const results = data.products || [];
-    if (results.length < 12) throw new Error('No hay suficientes productos');
+    if (!Array.isArray(results) || results.length < 12) throw new Error('No hay suficientes productos');
 
     state.products = results
       .filter((p) => p.price && p.title && p.thumbnail)
       .slice(0, Math.max(state.totalRounds, 16))
       .map((p) => ({
         title: p.title,
-        price: Math.round(p.price * 0.92 * 100) / 100,
+        price: Math.round(p.price * 100) / 100,
         thumbnail: p.thumbnail,
       }));
 

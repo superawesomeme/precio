@@ -1,0 +1,12 @@
+{
+  "name": "precio-scraper",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Scraper to fetch real products from El Corte Inglés for El Precio Justo game",
+  "scripts": {
+    "scrape": "node scrape-products.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0"
+  }
+}
