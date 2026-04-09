@@ -89,21 +89,27 @@ function formatSpanishCurrency(n) {
 }
 
 /** Generate 11 fake prices within ±40% of the actual price, plus the real one. */
+const PRICE_RANGE_FACTOR = 0.4;            // ±40% of the actual price
+const MIN_PRICE_DIFF_RATIO = 0.01;         // Minimum 1% gap between any two prices
+const FALLBACK_OFFSET_STEP = 0.02;         // Step multiplier for fallback fill
+const FALLBACK_OFFSET_BASE = 0.01;         // Base offset for fallback fill
+const TOTAL_PRICE_OPTIONS = 12;
+
 function generatePrices(actualPrice) {
   const prices = new Set();
   prices.add(roundToTwo(actualPrice));
 
-  const lo = actualPrice * 0.6;
-  const hi = actualPrice * 1.4;
+  const lo = actualPrice * (1 - PRICE_RANGE_FACTOR);
+  const hi = actualPrice * (1 + PRICE_RANGE_FACTOR);
 
   let attempts = 0;
-  while (prices.size < 12 && attempts < 200) {
+  while (prices.size < TOTAL_PRICE_OPTIONS && attempts < 200) {
     let fake = lo + Math.random() * (hi - lo);
     fake = roundToTwo(fake);
     // Avoid duplicates and prices that are too close to each other
     let tooClose = false;
     for (const p of prices) {
-      if (Math.abs(p - fake) < actualPrice * 0.01) {
+      if (Math.abs(p - fake) < actualPrice * MIN_PRICE_DIFF_RATIO) {
         tooClose = true;
         break;
       }
@@ -115,8 +121,8 @@ function generatePrices(actualPrice) {
   }
 
   // If we still don't have 12, fill with slight variations
-  while (prices.size < 12) {
-    const offset = (prices.size * 0.02 + 0.01) * actualPrice * (Math.random() > 0.5 ? 1 : -1);
+  while (prices.size < TOTAL_PRICE_OPTIONS) {
+    const offset = (prices.size * FALLBACK_OFFSET_STEP + FALLBACK_OFFSET_BASE) * actualPrice * (Math.random() > 0.5 ? 1 : -1);
     prices.add(roundToTwo(actualPrice + offset));
   }
 
