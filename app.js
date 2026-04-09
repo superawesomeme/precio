@@ -3,28 +3,32 @@
    State management, API calls, price generation, and scoring logic
    ================================================================= */
 
-// --------------- Constants ---------------
-const API_KEY = '7b7c1a69d95da70eecb1d0080abe23b65e3a23cdea8cf5e14a5127ebdd6d0621';
-const API_URL = `https://serpapi.com/search.json?engine=google_shopping&q=productos+destacados+carrefour&location=Spain&gl=es&hl=es&api_key=${API_KEY}`;
-
 // --------------- Fallback Products ---------------
 const fallbackProducts = [
-  { title: 'Televisor Samsung 55\" 4K UHD', price: 549.99, thumbnail: 'https://via.placeholder.com/300?text=TV+Samsung' },
-  { title: 'Cafetera Nespresso Vertuo', price: 129.99, thumbnail: 'https://via.placeholder.com/300?text=Cafetera' },
-  { title: 'Robot aspirador Roomba 692', price: 249.00, thumbnail: 'https://via.placeholder.com/300?text=Roomba' },
-  { title: 'Auriculares Sony WH-1000XM4', price: 279.99, thumbnail: 'https://via.placeholder.com/300?text=Auriculares' },
-  { title: 'Batidora KitchenAid Artisan', price: 399.99, thumbnail: 'https://via.placeholder.com/300?text=Batidora' },
-  { title: 'Patinete eléctrico Xiaomi Pro 2', price: 449.00, thumbnail: 'https://via.placeholder.com/300?text=Patinete' },
-  { title: 'Tablet Apple iPad 10.2\"', price: 379.00, thumbnail: 'https://via.placeholder.com/300?text=iPad' },
-  { title: 'Freidora de aire Cosori 5.5L', price: 99.99, thumbnail: 'https://via.placeholder.com/300?text=Freidora' },
-  { title: 'Reloj inteligente Garmin Venu 2', price: 349.99, thumbnail: 'https://via.placeholder.com/300?text=Garmin' },
-  { title: 'Altavoz Bluetooth JBL Charge 5', price: 159.00, thumbnail: 'https://via.placeholder.com/300?text=JBL' },
-  { title: 'Cámara Canon EOS 2000D', price: 449.99, thumbnail: 'https://via.placeholder.com/300?text=Canon' },
-  { title: 'Consola Nintendo Switch OLED', price: 349.99, thumbnail: 'https://via.placeholder.com/300?text=Nintendo' },
-  { title: 'Portátil Lenovo IdeaPad 3', price: 499.00, thumbnail: 'https://via.placeholder.com/300?text=Lenovo' },
-  { title: 'Plancha de pelo GHD Original', price: 139.00, thumbnail: 'https://via.placeholder.com/300?text=GHD' },
-  { title: 'Microondas Teka ML 820 BIS', price: 119.99, thumbnail: 'https://via.placeholder.com/300?text=Microondas' },
-  { title: 'Silla gaming Secretlab Titan', price: 389.00, thumbnail: 'https://via.placeholder.com/300?text=Silla' },
+  { title: 'Smartphone Samsung Galaxy S24', price: 849.99, thumbnail: 'https://cdn.dummyjson.com/products/images/smartphones/Samsung%20Galaxy%20S24/1.png' },
+  { title: 'Portátil Apple MacBook Air M2', price: 1299.00, thumbnail: 'https://cdn.dummyjson.com/products/images/laptops/Apple%20MacBook%20Air%20M2/1.png' },
+  { title: 'Perfume Calvin Klein CK One', price: 49.99, thumbnail: 'https://cdn.dummyjson.com/products/images/fragrances/Calvin%20Klein%20CK%20One/1.png' },
+  { title: 'Auriculares inalámbricos de lujo', price: 279.99, thumbnail: 'https://cdn.dummyjson.com/products/images/vehicle/Dodge%20Challenger/1.png' },
+  { title: 'Televisor Samsung 55" 4K UHD', price: 549.99, thumbnail: 'https://cdn.dummyjson.com/products/images/furniture/Annibale%20Colombo%20Bed/1.png' },
+  { title: 'Smartphone iPhone 15 Pro', price: 1199.00, thumbnail: 'https://cdn.dummyjson.com/products/images/smartphones/iPhone%2015%20Pro/1.png' },
+  { title: 'Portátil HP Pavilion 15', price: 699.00, thumbnail: 'https://cdn.dummyjson.com/products/images/laptops/Huawei%20MatePad%20SE%2010.4-Inch/1.png' },
+  { title: 'Tablet Samsung Galaxy Tab S9', price: 899.00, thumbnail: 'https://cdn.dummyjson.com/products/images/tablets/Samsung%20Galaxy%20Tab%20S9/1.png' },
+  { title: 'Reloj inteligente Apple Watch Ultra 2', price: 799.00, thumbnail: 'https://cdn.dummyjson.com/products/images/mens-watches/Apple%20Watch%20Series%209%20Aluminum/1.png' },
+  { title: 'Perfume Gucci Bloom', price: 89.99, thumbnail: 'https://cdn.dummyjson.com/products/images/fragrances/Gucci%20Bloom%20Eau%20de/1.png' },
+  { title: 'Zapatillas Nike Air Max 270', price: 149.99, thumbnail: 'https://cdn.dummyjson.com/products/images/mens-shoes/Nike%20Air%20Max%20270%20SE/1.png' },
+  { title: 'Camiseta Polo Ralph Lauren', price: 79.99, thumbnail: 'https://cdn.dummyjson.com/products/images/tops/Polo%20collar%20t-shirt/1.png' },
+  { title: 'Sofá esquinero moderno', price: 849.00, thumbnail: 'https://cdn.dummyjson.com/products/images/furniture/Bedside%20Table%20African%20Cherry/1.png' },
+  { title: 'Cosmética L\'Oréal Revitalift', price: 29.99, thumbnail: 'https://cdn.dummyjson.com/products/images/skin-care/Essence%20Skin%20Care%20Cream/1.png' },
+  { title: 'Bolso de piel marrón elegante', price: 199.00, thumbnail: 'https://cdn.dummyjson.com/products/images/womens-bags/Chanel%20Classic%20Flap%20Bag/1.png' },
+  { title: 'Gafas de sol Ray-Ban Aviator', price: 139.00, thumbnail: 'https://cdn.dummyjson.com/products/images/sunglasses/Gradient%20Sunglasses/1.png' },
+  { title: 'Collar de plata con colgante', price: 59.99, thumbnail: 'https://cdn.dummyjson.com/products/images/womens-jewellery/Diamond%20Necklace/1.png' },
+  { title: 'Smartphone Google Pixel 8', price: 699.00, thumbnail: 'https://cdn.dummyjson.com/products/images/smartphones/Google%20Pixel%208/1.png' },
+  { title: 'Portátil Dell XPS 15', price: 1599.00, thumbnail: 'https://cdn.dummyjson.com/products/images/laptops/Lenovo%20IdeaPad%20Slim%205i/1.png' },
+  { title: 'Zapatillas Adidas Ultraboost 22', price: 179.99, thumbnail: 'https://cdn.dummyjson.com/products/images/mens-shoes/Adidas%20Classic%20Sneakers/1.png' },
+  { title: 'Consola PlayStation 5', price: 549.99, thumbnail: 'https://cdn.dummyjson.com/products/images/smartphones/OPPOF21%20Pro/1.png' },
+  { title: 'Perfume Chanel N°5', price: 129.99, thumbnail: 'https://cdn.dummyjson.com/products/images/fragrances/Chanel%20Coco%20Noir%20Eau%20De/1.png' },
+  { title: 'Frigorífico americano Samsung', price: 1199.00, thumbnail: 'https://cdn.dummyjson.com/products/images/furniture/Wooden%20Bathroom%20Sink%20With%20Mirror/1.png' },
+  { title: 'Auriculares Sony WH-1000XM5', price: 349.00, thumbnail: 'https://cdn.dummyjson.com/products/images/mens-watches/Brown%20Strap%20Watch/1.png' },
 ];
 
 // --------------- Game State ---------------
@@ -195,30 +199,34 @@ elBtnStart.addEventListener('click', async () => {
 
 // --------------- API / Fetch Products ---------------
 
+const SVG_PLACEHOLDER = 'data:image/svg+xml,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 width%3D%22300%22 height%3D%22300%22 viewBox%3D%220 0 300 300%22%3E%3Crect width%3D%22300%22 height%3D%22300%22 fill%3D%22%23f0f0f0%22/%3E%3Ctext x%3D%2250%25%22 y%3D%2245%25%22 font-size%3D%2264%22 text-anchor%3D%22middle%22 dominant-baseline%3D%22middle%22%3E%F0%9F%9B%8D%3C/text%3E%3Ctext x%3D%2250%25%22 y%3D%2265%25%22 font-size%3D%2218%22 text-anchor%3D%22middle%22 dominant-baseline%3D%22middle%22 fill%3D%22%23999%22%3ESin imagen%3C/text%3E%3C/svg%3E';
+
 async function fetchProducts() {
-  elLoadingStatus.textContent = 'Buscando productos en Carrefour España…';
+  elLoadingStatus.textContent = 'Buscando productos destacados…';
   try {
-    const resp = await fetch(API_URL);
+    const resp = await fetch('https://dummyjson.com/products?limit=50');
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const data = await resp.json();
 
-    const results = data.shopping_results || data.inline_shopping_results || [];
+    const results = data.products || [];
     if (results.length < 12) throw new Error('No hay suficientes productos');
 
     state.products = results
-      .filter((r) => r.extracted_price && r.title && r.thumbnail)
-      .slice(0, Math.max(state.totalRounds, 12))
-      .map((r) => ({
-        title: r.title,
-        price: parseFloat(r.extracted_price),
-        thumbnail: r.thumbnail,
+      .filter((p) => p.price && p.title && p.thumbnail)
+      .slice(0, Math.max(state.totalRounds, 16))
+      .map((p) => ({
+        title: p.title,
+        price: Math.round(p.price * 0.92 * 100) / 100,
+        thumbnail: p.thumbnail,
       }));
+
+    state.products = shuffle(state.products);
 
     if (state.products.length < state.totalRounds) throw new Error('Productos insuficientes');
   } catch (err) {
     console.warn('API falló, usando productos de reserva:', err.message);
     elLoadingStatus.textContent = 'Usando productos de reserva…';
-    state.products = shuffle([...fallbackProducts]).slice(0, Math.max(state.totalRounds, 12));
+    state.products = shuffle([...fallbackProducts]).slice(0, Math.max(state.totalRounds, 16));
     await delay(800);
   }
 
@@ -246,6 +254,7 @@ function startRound() {
   // UI updates
   elRoundNumber.textContent = round + 1;
   elPrimoName.textContent = state.players[state.primoIndex].name;
+  elProductImage.onerror = function() { this.onerror = null; this.src = SVG_PLACEHOLDER; };
   elProductImage.src = product.thumbnail;
   elProductImage.alt = product.title;
   elProductTitle.textContent = product.title;
@@ -353,6 +362,7 @@ function revealRound() {
   showScreen('reveal');
 
   elCorrectPrice.textContent = formatSpanishCurrency(actual);
+  elRevealProductImg.onerror = function() { this.onerror = null; this.src = SVG_PLACEHOLDER; };
   elRevealProductImg.src = product.thumbnail;
   elRevealProductTitle.textContent = product.title;
 
